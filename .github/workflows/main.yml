@@ -1,0 +1,28 @@
+name: Hyperparameter Tuning
+
+on:
+  push:
+    branches:
+      - feature/assignment3
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9  # Replace with your desired Python version
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt  # Replace with your actual requirements file
+        # Add any other setup steps you need here
+
+    - name: Run the script
+      run: |
+        python plot_digits_classification.py  # Replace with the name of your Python script
