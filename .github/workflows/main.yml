@@ -3,7 +3,7 @@ name: Hyperparameter Tuning
 on:
   push:
     branches:
-      - feature/assignment3
+      - features/assignment3
 
 jobs:
   build:
