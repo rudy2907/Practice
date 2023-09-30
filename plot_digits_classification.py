@@ -3,7 +3,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from sklearn import datasets, metrics, svm
 from sklearn.model_selection import train_test_split
-
+import joblib  # Import joblib for model saving/loading
 
 # Define the function for splitting data into train, dev, and test sets
 def Split_Train_Dev_Test(X, y, test_size, dev_size):
@@ -11,7 +11,6 @@ def Split_Train_Dev_Test(X, y, test_size, dev_size):
     X_dev, X_test, y_dev, y_test = train_test_split(X_temp, y_temp, test_size=(dev_size / (test_size + dev_size)),
                                                     shuffle=False)
     return X_train, X_dev, X_test, y_train, y_dev, y_test
-
 
 # Define the function for predicting and evaluating the model
 def Predict_and_Eval(model, X_test, y_test):
@@ -34,7 +33,6 @@ def Predict_and_Eval(model, X_test, y_test):
     print("Classification report rebuilt from confusion matrix:\n"
           f"{metrics.classification_report(y_true, y_pred)}\n")
 
-
 # Function for hyperparameter tuning
 def tune_hparams(X_train, Y_train, X_dev, Y_dev, list_of_all_param_combinations):
     best_hparams = None
@@ -55,8 +53,10 @@ def tune_hparams(X_train, Y_train, X_dev, Y_dev, list_of_all_param_combinations)
             best_model = model
             best_accuracy = dev_accuracy
 
-    return best_hparams, best_model, best_accuracy
+    # Save the best model to a file
+    joblib.dump(best_model, 'best_model.pkl')
 
+    return best_hparams, best_model, best_accuracy
 
 # Load the digits dataset
 digits = datasets.load_digits()
@@ -82,15 +82,19 @@ for test_size in test_sizes:
         # Call the hyperparameter tuning function
         best_hparams, best_model, best_accuracy = tune_hparams(X_train, y_train, X_dev, y_dev, list_of_all_param_combinations)
 
+        # Load the best model
+        loaded_model = joblib.load('best_model.pkl')
+
         print(f"test_size={test_size} dev_size={dev_size} train_size={train_size} train_acc={best_accuracy} dev_acc={best_accuracy} test_acc={best_accuracy}")
         print(f"Best hyperparameters: {best_hparams}")
 
 # Visualize the dev set predictions
 _, axes = plt.subplots(nrows=1, ncols=4, figsize=(10, 3))
-for ax, image, prediction in zip(axes, X_dev, best_model.predict(X_dev)):
+for ax, image, prediction in zip(axes, X_dev, loaded_model.predict(X_dev)):
     ax.set_axis_off()
     image = image.reshape(8, 8)
     ax.imshow(image, cmap=plt.cm.gray_r, interpolation="nearest")
     ax.set_title(f"Prediction: {prediction}")
 
-plt.show() # for displaying
+plt.show()  # for displaying
+
