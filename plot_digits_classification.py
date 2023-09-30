@@ -93,4 +93,4 @@ for ax, image, prediction in zip(axes, X_dev, best_model.predict(X_dev)):
     ax.imshow(image, cmap=plt.cm.gray_r, interpolation="nearest")
     ax.set_title(f"Prediction: {prediction}")
 
-plt.show()
+plt.show() # for displaying
